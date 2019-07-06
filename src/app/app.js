@@ -26,6 +26,7 @@ require('angular-block-ui');
 require('angular-toastr');
 require('angular-translate');
 require('angular-translate-loader-static-files');
+require('@aspnet/signalr');
 
 // Module declaration.
 var ngModule = angular.module('ngApp', ['ui.router', 'blockUI', 'toastr', 'pascalprecht.translate']);
@@ -45,7 +46,19 @@ ngModule.config(function($urlRouterProvider, $translateProvider, $httpProvider, 
 
     // en-US is default selection.
     $translateProvider.use('en-US');
+});
 
+ngModule.controller('appController', function($scope){
+
+    var hubConnection = new signalr.HubConnection('http://localhost:61029/chathub');
+    hubConnection.on('clientReceivedMessage', function(data){
+        console.log(data);
+    });
+
+    hubConnection.start()
+        .catch(function(error){
+            console.log(error);
+        });
 });
 
 // Constants import.
